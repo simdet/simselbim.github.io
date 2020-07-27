@@ -51,6 +51,14 @@ var map = new Map({
 
 var polygonFillColor = new Fill({color: [255, 153, 51,0.5]})
 
+/* var polygonStroke = new Stroke({color: 'gray'});
+var defaultStyle = new Style({
+  fill: null,
+  stroke: polygonStroke
+});
+
+district_layer.setStyle(defaultStyle)
+ */
 // polygon style function that set opacity relative to cooccurrence value
 function cooccStylefunction(feature, district) {
   let opacity = null;
@@ -61,7 +69,9 @@ function cooccStylefunction(feature, district) {
     opacity = 0;
   }
   console.log('opacity: ', opacity)
-  return new Style({fill: new Fill({color: [255, 153, 51, opacity]})});
+  return new Style({
+    fill: new Fill({color: [255, 153, 51, opacity]})
+  });
   
 }
 
@@ -115,10 +125,14 @@ selectClick.on('select', function(e) {
       ' , TOTAL COUNT: ' + e.target.getFeatures().item(0).getProperties()['COOCCURRENCE_DATA']['abs_occurrence'];
   } else {
     // TODO: handling of missing data
-  }
+    console.log('no co occurrence data available');
+    document.getElementById('status').innerHTML = '&nbsp;' +
+    ' ORTSTEIL: ' + e.target.getFeatures().item(0).getProperties()['OTEIL'] + ': no data';
+/*     district_layer.setStyle(function(feature) {
+      return defaultStyle
+      });*/
+    }; 
+  })
+
   
-  
-  // change style of all districts
-  
-});
 
