@@ -46,7 +46,8 @@ var map = new Map({
   view: new View({
     center: ol.proj.fromLonLat([13.404954,52.520008]),
     zoom: 10
-  })
+  }),
+  interactions: []
 });
 
 // STYLES
