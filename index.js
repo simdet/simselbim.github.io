@@ -109,14 +109,9 @@ selectClick.on('select', function(e) {
     district_layer.setStyle(function(feature) {
       return cooccStylefunction(feature, cooccDistrictName);
     });
-    document.getElementById('status').innerHTML = '&nbsp;' +
-      ' ORTSTEIL: ' + e.target.getFeatures().item(0).getProperties()['OTEIL'] +
-      ' , TOTAL COUNT: ' + e.target.getFeatures().item(0).getProperties()['COOCCURRENCE_DATA']['abs_occurrence'];
   } else {
     // handling of missing data
     console.log('no co occurrence data available');
-    document.getElementById('status').innerHTML = '&nbsp;' +
-    ' ORTSTEIL: ' + e.target.getFeatures().item(0).getProperties()['OTEIL'] + ': no data';
     district_layer.setStyle(function(feature) {
       return unselectStyle
       });
