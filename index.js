@@ -45,7 +45,7 @@ var map = new Map({
   target: 'map',
   view: new View({
     center: ol.proj.fromLonLat([13.404954,52.520008]),
-    zoom: 10
+    zoom: 10.3
   }),
   interactions: []
 });
