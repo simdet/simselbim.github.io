@@ -68,30 +68,34 @@ function cooccStylefunction(feature, district) {
     //console.log('no cooccurrence data.')
     opacity = 0;
   }
-  console.log('opacity: ', opacity)
   return new Style({
     fill: new Fill({color: [255, 153, 51, opacity]})
   });
   
 }
 
-
-// select interaction working on "click"
-var selectClick = new Select({
-  condition: click,
-  style: function(feature) {
+function selectDistrictStyle(feature) {
     console.log('selected district: ', feature.getProperties().OTEIL)
+    // 
+    numberRequests = feature.getProperties().COOCCURRENCE_DATA ? feature.getProperties().COOCCURRENCE_DATA.abs_occurrence : 'no data'
+    districtText = feature.getProperties().OTEIL
     return new Style({
       text: new ol.style.Text({
         fill: new Fill({color: 'blue'}),
-        text: feature.getProperties().OTEIL,
+        text: feature.getProperties().OTEIL + '\n' + numberRequests,
         overflow: true
       }),
       fill: new Fill({
         color: [255, 153, 51, 1]
       })
     })
-  }
+}
+
+
+// select interaction working on "click"
+var selectClick = new Select({
+  condition: click,
+  style: selectDistrictStyle
 });
 
 var hover = new Select({
