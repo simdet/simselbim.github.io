@@ -49,39 +49,36 @@ var map = new Map({
   })
 });
 
-var polygonFillColor = new Fill({color: [255, 153, 51,0.5]})
+// STYLES
 
-/* var polygonStroke = new Stroke({color: 'gray'});
-var defaultStyle = new Style({
-  fill: null,
+var polygonStroke = new Stroke({color: [255, 153, 51, 0.5]});
+
+var unselectStyle = new Style({
+  fill: new Fill({color: 'white'}),
   stroke: polygonStroke
 });
 
-district_layer.setStyle(defaultStyle)
- */
 // polygon style function that set opacity relative to cooccurrence value
 function cooccStylefunction(feature, district) {
   let opacity = null;
   if (feature.getProperties().COOCCURRENCE_DATA) {
     opacity = feature.getProperties().COOCCURRENCE_DATA.rel_cooccurrence[district];
   } else {
-    //console.log('no cooccurrence data.')
     opacity = 0;
   }
   return new Style({
-    fill: new Fill({color: [255, 153, 51, opacity]})
+    fill: new Fill({color: [255, 153, 51, opacity]}),
+    stroke: polygonStroke
   });
   
 }
 
 function selectDistrictStyle(feature) {
-    console.log('selected district: ', feature.getProperties().OTEIL)
-    // 
     numberRequests = feature.getProperties().COOCCURRENCE_DATA ? feature.getProperties().COOCCURRENCE_DATA.abs_occurrence : 'no data'
     districtText = feature.getProperties().OTEIL
     return new Style({
       text: new ol.style.Text({
-        fill: new Fill({color: 'blue'}),
+        fill: new Fill({color: 'black'}),
         text: feature.getProperties().OTEIL + '\n' + numberRequests,
         overflow: true
       }),
@@ -98,45 +95,54 @@ var selectClick = new Select({
   style: selectDistrictStyle
 });
 
-var hover = new Select({
-  condition: pointerMove,
-  style: function(feature) {
-    console.log('selected district: ', feature.getProperties().OTEIL)
-    return new Style({
-      text: new ol.style.Text({
-        fill: new Fill({color: 'blue'}),
-        text: feature.getProperties().OTEIL,
-        overflow: true
-      })
-    })
-  }
-})
-
-//map.addInteraction(hover)
-
+district_layer.setStyle(unselectStyle)
 
 map.addInteraction(selectClick);
 selectClick.on('select', function(e) {
-  let selDistrict = null;
+  console.log('selected district: ', e.target.getFeatures().item(0).getProperties().OTEIL)
+  
+  // if co-occurrence data exist change fill styles
+  let cooccDistrictName = null;
   if (e.target.getFeatures().item(0).getProperties().COOCCURRENCE_DATA) {
-    selDistrict = e.target.getFeatures().item(0).getProperties().COOCCURRENCE_DATA.name;
-    console.log('coocc district name: ', selDistrict);
+    cooccDistrictName = e.target.getFeatures().item(0).getProperties().COOCCURRENCE_DATA.name;
+    console.log('coocc district name: ', cooccDistrictName);
     district_layer.setStyle(function(feature) {
-      return cooccStylefunction(feature, selDistrict);
+      return cooccStylefunction(feature, cooccDistrictName);
     });
     document.getElementById('status').innerHTML = '&nbsp;' +
       ' ORTSTEIL: ' + e.target.getFeatures().item(0).getProperties()['OTEIL'] +
       ' , TOTAL COUNT: ' + e.target.getFeatures().item(0).getProperties()['COOCCURRENCE_DATA']['abs_occurrence'];
   } else {
-    // TODO: handling of missing data
+    // handling of missing data
     console.log('no co occurrence data available');
     document.getElementById('status').innerHTML = '&nbsp;' +
     ' ORTSTEIL: ' + e.target.getFeatures().item(0).getProperties()['OTEIL'] + ': no data';
-/*     district_layer.setStyle(function(feature) {
-      return defaultStyle
-      });*/
+    district_layer.setStyle(function(feature) {
+      return unselectStyle
+      });
     }; 
   })
 
+  // Hover to show unselected district names
+
   
+/*   var hover = new Select({
+    condition: pointerMove,
+    style: function(feature) {
+      // TODO: only set text and keep other style
+      //console.log('Style: ', feature.getStyle())
+      //feature.getStyle().setText('test') 
+      // (didn't work)
+      return new Style({
+        text: new ol.style.Text({
+          fill: new Fill({color: 'grey'}),
+          text: feature.getProperties().OTEIL,
+          overflow: true
+        }),
+        stroke: polygonStroke
+      })
+    }
+  })
+  
+  map.addInteraction(hover) */
 
